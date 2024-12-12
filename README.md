@@ -22,6 +22,7 @@ QuestionRenderer: 根据问题类型渲染具体的题目组件。
 QuestionComponents: 针对不同问题类型的独立组件（单选、多选、填空等）。
 扩展机制: 提供插槽或注册机制，允许动态添加自定义题型。
 2. 组件结构设计
+```
 QuizContainer (父组件)
 ├── QuestionRenderer (动态渲染器)
 │   ├── SingleChoiceQuestion (单选题组件)
@@ -29,6 +30,7 @@ QuizContainer (父组件)
 │   ├── FillInTheBlankQuestion (填空题组件)
 │   ├── CustomQuestion (支持扩展的题目组件)
 └── QuizControls (控制按钮：上一题、下一题、提交等)
+```
 
 
 (1) QuizContainer
