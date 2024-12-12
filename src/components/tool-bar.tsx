@@ -24,7 +24,7 @@ const ToolBar = ({ onPrev, onNext, onSubmit, currentQuestionIndex, totalQuestion
         <Button onClick={onNext} disabled={currentQuestionIndex === totalQuestions - 1}>下一题</Button>
       </Space>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button type="primary" onClick={onSubmit}>提交</Button>
+        <Button type="primary" onClick={onSubmit} disabled={!(currentQuestionIndex === totalQuestions - 1)}>提交</Button>
       </div>
     </div>
 
