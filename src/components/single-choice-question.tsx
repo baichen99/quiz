@@ -17,7 +17,7 @@ const SingleChoiceQuestion = ({
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
 
   return (
-    <div className="w-full flex flex-col items-center gap-4">
+    <div className="flex w-full flex-col items-center gap-4">
       {renderQuestion ? (
         renderQuestion(question)
       ) : (
@@ -28,20 +28,20 @@ const SingleChoiceQuestion = ({
               preview={false}
               src={question.imageSrc}
               fallback={ErrorImage}
-              className="w-full max-h-60 object-contain"
+              className="max-h-60 w-full object-contain"
             />
           )}
         </div>
       )}
 
       {/* Tailwind grid for two options per row */}
-      <div className="w-full grid grid-cols-2 gap-4">
+      <div className="grid w-full grid-cols-2 gap-4">
         {question.options.map((option) => (
           <div
-            className={`h-auto border border-gray-300 hover:border-neutral-900 rounded-md p-4 cursor-pointer transition-all duration-100 hover:bg-gray-100 text-lg ${
+            className={`h-auto cursor-pointer rounded-md border border-gray-300 p-4 text-lg transition-all duration-100 hover:border-neutral-900 ${
               userAnswer === option.id // 选中的选项
-                ? "bg-blue-500 text-white hover:bg-blue-500 border-neutral-900"
-                : "bg-white"
+                ? "border-neutral-900 bg-blue-500 text-white hover:bg-blue-500"
+                : "bg-white hover:bg-gray-100"
             }`}
             key={option.id}
             onClick={() => {
@@ -54,7 +54,7 @@ const SingleChoiceQuestion = ({
               <Image
                 preview={false}
                 src={option.imageSrc}
-                className="w-1/2 mx-auto mb-2"
+                className="mx-auto mb-2 w-1/2"
                 fallback={ErrorImage}
               />
             )}

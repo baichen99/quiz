@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import type { MultipleChoiceQuestion, Option } from "../types";
-import { Button, Flex, Image, Space, Typography } from "antd";
+import { Image, Typography } from "antd"; // 保留了 Image 和 Typography 来显示图片和文本
 
 interface MultipleChoiceQuestionProps {
   question: MultipleChoiceQuestion; // 问题
@@ -34,39 +34,43 @@ const MultipleChoiceQuestion = ({
     }
     onAnswer(
       question.id,
-      question.options.filter((opt) => updatedAnswers.includes(opt.id))
+      question.options.filter((opt) => updatedAnswers.includes(opt.id)),
     );
   };
 
   return (
-    <Flex vertical align="center" gap={8}>
-      <Typography.Title level={1}>{question.text}</Typography.Title>
-      <Image src={question.imageSrc} style={{ width: "100%" }} />
-      <Space direction="vertical" style={{ width: "100%" }} size={20}>
+    <div className="flex w-full flex-col items-center gap-4">
+      <Typography.Title level={1} className="text-center">
+        {question.text}
+      </Typography.Title>
+      <Image src={question.imageSrc} className="w-full" />
+
+      <div className="w-full space-y-4">
         {question.options.map((option) => (
-          <Button
-            style={{ width: "100%", minHeight: 50, height: "auto" }}
+          <div
             key={option.id}
-            type={userAnswers.has(option.id) ? "primary" : "default"} // 当前选中的选项高亮
+            className={`w-full cursor-pointer rounded-md border p-4 text-lg transition-all duration-200 border-neutral-900${
+              userAnswers.has(option.id)
+                ? "border-neutral-900 bg-blue-500 text-white hover:bg-blue-500"
+                : "border-gray-300 bg-white hover:bg-gray-100"
+            }`}
             onClick={() => toggleAnswer(option)}
           >
-            <Flex justify="space-between" align="center">
-              {option.imageSrc ? (
+            <div className="flex items-center justify-between">
+              {option.imageSrc && (
                 <Image
                   preview={false}
                   src={option.imageSrc}
-                  width={"50%"}
-                  style={{ borderRadius: "2%" }}
+                  width="50%"
+                  className="rounded-lg"
                 />
-              ) : null}
-              <span style={{ whiteSpace: "normal", fontSize: 20, flex: 1 }}>
-                {option.text}
-              </span>
-            </Flex>
-          </Button>
+              )}
+              <span className="flex-1 text-center">{option.text}</span>
+            </div>
+          </div>
         ))}
-      </Space>
-    </Flex>
+      </div>
+    </div>
   );
 };
 

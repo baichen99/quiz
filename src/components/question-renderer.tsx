@@ -7,18 +7,18 @@ interface QuestionRendererProps {
   onAnswer: (id: string, answer: Option | Option[]) => void;
 }
 
-const QuestionRenderer = ({question, onAnswer}: QuestionRendererProps) => {
+const QuestionRenderer = ({ question, onAnswer }: QuestionRendererProps) => {
   const renderQuestion = () => {
-    switch (question.type) {
+    switch (question?.type) {
       case "single-choice":
         return <SingleChoiceQuestion onAnswer={onAnswer} question={question} />;
       case "multiple-choice":
         return <MultiChoiceQuestion onAnswer={onAnswer} question={question} />;
       default:
-        return <div>Unsupported question type</div>
+        return <div>Unsupported question type</div>;
     }
-  }
+  };
   return renderQuestion();
-}
+};
 
 export default QuestionRenderer;
