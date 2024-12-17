@@ -1,44 +1,68 @@
 import { memo, useState } from "react";
 import type { SingleChoiceQuestion, Option } from "../types";
-import { Button, Flex, Image, Space, Typography } from "antd";
+import { Image, Typography } from "antd";
+import ErrorImage from "../assets/error_image.png";
 
 interface SingleChoiceQuestionProps {
   question: SingleChoiceQuestion; // 问题
-  onAnswer: (questionId: string, answer: Option) => void; // 回答问题时的回调
+  onAnswer: (questionId: string, answer: Option) => void;
+  renderQuestion?: (question: SingleChoiceQuestion) => React.ReactNode;
 }
 
 const SingleChoiceQuestion = ({
   question,
   onAnswer,
+  renderQuestion,
 }: SingleChoiceQuestionProps) => {
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
 
   return (
-    <Flex vertical align="center" gap={8}>
-      <Typography.Title level={1}>{question.text}</Typography.Title>
-      <Image src={question.imageSrc} style={{ width: "100%" }} />
-      <Space direction="vertical" style={{width: "100%"}} size={20}>
+    <div className="w-full flex flex-col items-center gap-4">
+      {renderQuestion ? (
+        renderQuestion(question)
+      ) : (
+        <div className="text-center">
+          <Typography.Title level={4}>{question.text}</Typography.Title>
+          {question?.imageSrc && (
+            <Image
+              preview={false}
+              src={question.imageSrc}
+              fallback={ErrorImage}
+              className="w-full max-h-60 object-contain"
+            />
+          )}
+        </div>
+      )}
+
+      {/* Tailwind grid for two options per row */}
+      <div className="w-full grid grid-cols-2 gap-4">
         {question.options.map((option) => (
-          <Button
-            style={{ width: "100%", minHeight: 50, height: "auto" }}
+          <div
+            className={`h-auto border border-gray-300 hover:border-neutral-900 rounded-md p-4 cursor-pointer transition-all duration-100 hover:bg-gray-100 text-lg ${
+              userAnswer === option.id // 选中的选项
+                ? "bg-blue-500 text-white hover:bg-blue-500 border-neutral-900"
+                : "bg-white"
+            }`}
             key={option.id}
-            type={userAnswer === option.id ? "primary" : "default"} // 当前选中的选项高亮
             onClick={() => {
               console.log("Selected option:", option);
               setUserAnswer(option.id);
               onAnswer(question.id, option);
             }}
           >
-            <Flex justify="space-between" align="center">
-              { option.imageSrc ? <Image preview={false} src={option.imageSrc} width={"50%"} style={{ borderRadius: "2%" }} /> : null }
-              <span  style={{ whiteSpace: "normal", fontSize: 20, flex: 1 }}>
-                {option.text}
-              </span>
-            </Flex>
-          </Button>
+            {option.imageSrc && (
+              <Image
+                preview={false}
+                src={option.imageSrc}
+                className="w-1/2 mx-auto mb-2"
+                fallback={ErrorImage}
+              />
+            )}
+            <span className="block text-center">{option.text}</span>
+          </div>
         ))}
-      </Space>
-    </Flex>
+      </div>
+    </div>
   );
 };
 

@@ -8,13 +8,14 @@ import React, {
 import type { Question, BaseQuestion, Option } from "../types";
 import QuestionRenderer from "./question-renderer";
 import ToolBar from "./tool-bar";
+import { debounce } from "lodash-es";
 
 // QuizContainer 的 Props 类型
 export interface QuizContainerProps {
   questions: Question[]; // 传入的所有问题
   onSubmit?: (answers: Record<string, unknown>) => void; // 提交答案时的回调
   styles?: React.CSSProperties;
-  checkOnAnswer?: boolean; // 是否在回答时就检查对错
+  checkImmediate?: boolean; // 是否在回答时就检查对错
 }
 
 interface QuizContainerRef {
@@ -22,7 +23,7 @@ interface QuizContainerRef {
 }
 
 const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
-  ({ questions, onSubmit, styles, checkOnAnswer = true }, ref) => {
+  ({ questions, onSubmit, styles, checkImmediate = true }, ref) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<Record<string, unknown>>({});
     const audioCache = useRef<Record<string, HTMLAudioElement>>({});
@@ -78,17 +79,17 @@ const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
       };
     }, [questions]);
 
-    const playCorrectSound = () => {
+    const playCorrectSound = debounce(() => {
       const audio = audioCache.current["/correct.wav"];
       audio.currentTime = 0;
       audio.play();
-    };
+    }, 200);
 
-    const playIncorrectSound = () => {
+    const playIncorrectSound = debounce(() => {
       const audio = audioCache.current["/incorrect.wav"];
       audio.currentTime = 0;
       audio.play();
-    };
+    }, 200);
 
     // 检查多选题答案是否正确
     const checkMultipleChoiceAnswer = (
@@ -114,8 +115,8 @@ const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
         [id]: answer,
       }));
 
-      if (checkOnAnswer) {
-        // 检查对错
+      if (checkImmediate) {
+        // 选择答案后立即检查对错，并播放音效
         const question = questions[currentQuestionIndex];
         if (Array.isArray(answer)) {
           // 多选题逻辑
