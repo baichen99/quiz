@@ -1,7 +1,9 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import type { SingleChoiceQuestion, Option } from "../types";
 import { Image, Typography } from "antd";
 import ErrorImage from "../assets/error_image.png";
+import { SoundOutlined } from "@ant-design/icons";
+import useAudio from "../hooks/audio";
 
 interface SingleChoiceQuestionProps {
   question: SingleChoiceQuestion; // 问题
@@ -15,14 +17,31 @@ const SingleChoiceQuestion = ({
   renderQuestion,
 }: SingleChoiceQuestionProps) => {
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
-
+  const { playAudio, preloadAudio } = useAudio();
+  useEffect(() => {
+    if (question.audioSrc) {
+      preloadAudio(question.audioSrc);
+    }
+  }, [question.audioSrc, preloadAudio]);
   return (
     <div className="flex w-full flex-col items-center gap-4">
       {renderQuestion ? (
         renderQuestion(question)
       ) : (
         <div className="text-center">
-          <Typography.Title level={4}>{question.text}</Typography.Title>
+          <Typography.Title level={4}>
+            {question.text}
+            {question?.audioSrc && (
+              <SoundOutlined
+                className="ml-4 cursor-pointer transition-all duration-100 hover:scale-110 hover:text-blue-500"
+                onClick={() => {
+                  if (question.audioSrc) {
+                    playAudio(question.audioSrc);
+                  }
+                }}
+              />
+            )}
+          </Typography.Title>
           {question?.imageSrc && (
             <Image
               preview={false}

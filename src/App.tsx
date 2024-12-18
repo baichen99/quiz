@@ -40,6 +40,7 @@ const App = () => {
       id: "2",
       type: "single-choice",
       text: "声音测试：下面哪一个是音符?",
+      audioSrc: "/piano-g-6200.mp3",
       options: [
         { id: "1", text: "🎵", audioSrc: "/piano-g-6200.mp3" },
         {

@@ -11,9 +11,10 @@ interface QuizStore {
   setCurrentQuestionIndex: (index: number) => void;
   previousQuestion: () => void;
   nextQuestion: () => void;
+  getAudioSrcs: () => string[];
 }
 
-export const useQuizStore = create<QuizStore>((set) => ({
+export const useQuizStore = create<QuizStore>((set, get) => ({
   answers: {},
   questions: [],
   currentQuestionIndex: 0,
@@ -32,7 +33,17 @@ export const useQuizStore = create<QuizStore>((set) => ({
     set((state) => ({
       currentQuestionIndex: Math.min(
         state.currentQuestionIndex + 1,
-        state.questions.length - 1
+        state.questions.length - 1,
       ),
     })),
+  getAudioSrcs: () => {
+    const { questions } = get();
+    const audioSrcs: string[] = ["/correct.wav", "/incorrect.wav"];
+    questions.forEach((question) => {
+      if (question.audioSrc) {
+        audioSrcs.push(question.audioSrc);
+      }
+    });
+    return audioSrcs;
+  },
 }));

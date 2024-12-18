@@ -1,37 +1,43 @@
 import { useRef, useEffect } from "react";
 
-const useAudio = (audioSources: string[]) => {
+const useAudio = () => {
   const audioCache = useRef<Record<string, HTMLAudioElement>>({});
 
-  useEffect(() => {
-    const cache: Record<string, HTMLAudioElement> = {};
-    // 预加载音频
-    audioSources.forEach((src) => {
+  // 预加载音频
+  const preloadAudio = (src: string) => {
+    if (!audioCache.current[src]) {
       const audio = new Audio(src);
-      audio.load();
-      cache[src] = audio;
-    });
+      audio.load(); // 预加载音频
+      audioCache.current[src] = audio;
+    }
+  };
 
-    audioCache.current = cache;
+  // 播放音频
+  const playAudio = (src: string) => {
+    preloadAudio(src); // 确保音频已经预加载
+
+    const audio = audioCache.current[src];
+    if (audio) {
+      audio.currentTime = 0; // 重置播放进度
+      audio.play();
+    }
+  };
+
+  // 清理缓存
+  useEffect(() => {
+    // 将 audioCache.current 复制到一个局部变量
+    const cache = audioCache.current;
 
     return () => {
-      // Cleanup: Pause and remove audio elements
+      // 使用局部变量 cache 进行清理
       Object.values(cache).forEach((audio) => {
         audio.pause();
         audio.src = "";
       });
     };
-  }, [audioSources]);
+  }, []);
 
-  const playAudio = (src: string) => {
-    const audio = audioCache.current[src];
-    if (audio) {
-      audio.currentTime = 0;
-      audio.play();
-    }
-  };
-
-  return { playAudio };
+  return { playAudio, preloadAudio };
 };
 
 export default useAudio;
