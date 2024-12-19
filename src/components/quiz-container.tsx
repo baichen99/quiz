@@ -9,11 +9,7 @@ import QuestionRenderer from "./question-renderer";
 import ToolBar from "./tool-bar";
 import { useQuizStore } from "../store";
 import useAudio from "../hooks/audio";
-import {
-  checkAnswer,
-  checkMultipleChoice,
-  checkSingleChoice,
-} from "../hooks/check";
+import { checkAnswer } from "../hooks/check";
 
 // QuizContainer 的 Props 类型
 export interface QuizContainerProps {
