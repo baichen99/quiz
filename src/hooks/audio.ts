@@ -16,7 +16,6 @@ const useAudio = () => {
   const playAudio = (src: string) => {
     const audio = audioCache.current[src];
     if (audio) {
-      audio.currentTime = 0; // 重置播放进度
       audio.play();
     }
   };
