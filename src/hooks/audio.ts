@@ -14,8 +14,6 @@ const useAudio = () => {
 
   // 播放音频
   const playAudio = (src: string) => {
-    preloadAudio(src); // 确保音频已经预加载
-
     const audio = audioCache.current[src];
     if (audio) {
       audio.currentTime = 0; // 重置播放进度

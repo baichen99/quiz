@@ -41,6 +41,7 @@ const App = () => {
       type: "single-choice",
       text: "声音测试：下面哪一个是音符?",
       audioSrc: "/piano-g-6200.mp3",
+      correctAnswer: "1",
       options: [
         { id: "1", text: "🎵", audioSrc: "/piano-g-6200.mp3" },
         {
@@ -70,7 +71,7 @@ const App = () => {
       <QuizContainer
         initialQuestions={questions}
         onSubmit={console.log}
-        checkImmediate={false}
+        checkImmediate={true}
         styles={{
           width: "40%",
           padding: 20,

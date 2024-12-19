@@ -53,11 +53,10 @@ const SingleChoiceQuestion = ({
         </div>
       )}
 
-      {/* Tailwind grid for two options per row */}
       <div className="grid w-full grid-cols-2 gap-4">
         {question.options.map((option) => (
           <div
-            className={`h-auto cursor-pointer rounded-md border border-gray-300 p-4 text-lg transition-all duration-100 hover:border-neutral-900 ${
+            className={`align-center flex h-auto cursor-pointer flex-col justify-center rounded-md border border-gray-300 p-4 text-lg transition-all duration-100 hover:border-neutral-900 ${
               userAnswer === option.id // 选中的选项
                 ? "border-neutral-900 bg-blue-500 text-white hover:bg-blue-500"
                 : "bg-white hover:bg-gray-100"
@@ -77,7 +76,7 @@ const SingleChoiceQuestion = ({
                 fallback={ErrorImage}
               />
             )}
-            <span className="block text-center">{option.text}</span>
+            <span className="mt-auto block text-center">{option.text}</span>
           </div>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { Space, Button } from "antd";
+import { Button } from "antd";
 
 interface ToolBarProps {
   onPrev: () => void;
@@ -16,8 +16,8 @@ const ToolBar = ({
   totalQuestions,
 }: ToolBarProps) => {
   return (
-    <div className="flex flex-col gap-8 mt-8 w-full">
-      <div className="flex justify-between w-full">
+    <div className="mt-8 flex w-full flex-col gap-8">
+      <div className="flex w-full justify-between">
         <div className="flex gap-2">
           <Button onClick={onPrev} disabled={currentQuestionIndex === 0}>
             上一题
