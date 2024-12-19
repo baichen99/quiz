@@ -8,8 +8,8 @@ import type { Question, BaseQuestion, Option } from "../types";
 import QuestionRenderer from "./question-renderer";
 import ToolBar from "./tool-bar";
 import { useQuizStore } from "../store";
-import useAudio from "../hooks/audio";
 import { checkAnswer } from "../hooks/check";
+import useSound from "use-sound";
 
 // QuizContainer 的 Props 类型
 export interface QuizContainerProps {
@@ -34,20 +34,15 @@ const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
       answers,
       setAnswers,
     } = useQuizStore();
-    const { playAudio, preloadAudio } = useAudio();
     const [answerStatus, setAnswerStatus] = useState<
       "correct" | "incorrect" | "unanswered"
     >("unanswered");
+    const [playCorrectAudio] = useSound("/correct.wav");
+    const [playIncorrectAudio] = useSound("/incorrect.wav");
 
     useEffect(() => {
       setQuestions(initialQuestions);
     }, [initialQuestions, setQuestions]);
-
-    useEffect(() => {
-      ["/correct.wav", "/incorrect.wav"].forEach((src) => {
-        preloadAudio(src);
-      });
-    }, [preloadAudio]);
 
     // 在 question 组件中调用, 用于更新答案
     const handleAnswer = (
@@ -65,10 +60,10 @@ const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
         Array.isArray(option) && option.length < correctAnswer.length;
       if (checkImmediate && !dontCheck) {
         if (checkAnswer(correctAnswer, option)) {
-          playAudio("/correct.wav");
+          playCorrectAudio();
           setAnswerStatus("correct");
         } else {
-          playAudio("/incorrect.wav");
+          playIncorrectAudio();
           setAnswerStatus("incorrect");
         }
       }

@@ -1,9 +1,9 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useState } from "react";
 import type { SingleChoiceQuestion, Option } from "../types";
 import { Image, Typography } from "antd";
 import ErrorImage from "../assets/error_image.png";
 import { SoundOutlined } from "@ant-design/icons";
-import useAudio from "../hooks/audio";
+import useSound from "use-sound";
 
 interface SingleChoiceQuestionProps {
   question: SingleChoiceQuestion; // 问题
@@ -17,12 +17,8 @@ const SingleChoiceQuestion = ({
   renderQuestion,
 }: SingleChoiceQuestionProps) => {
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
-  const { playAudio, preloadAudio } = useAudio();
-  useEffect(() => {
-    if (question.audioSrc) {
-      preloadAudio(question.audioSrc);
-    }
-  }, [question.audioSrc, preloadAudio]);
+  const [playAudio] = useSound(question.audioSrc);
+
   return (
     <div className="flex w-full flex-col items-center gap-4">
       {renderQuestion ? (
