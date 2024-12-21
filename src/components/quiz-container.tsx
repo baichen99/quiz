@@ -1,15 +1,12 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
-import type { Question, BaseQuestion, Option } from "../types";
+import React, { forwardRef, useEffect, useImperativeHandle } from "react";
+import type { Question, Option } from "../types";
 import QuestionRenderer from "./question-renderer";
 import ToolBar from "./tool-bar";
 import { useQuizStore } from "../store";
 import { checkAnswer } from "../hooks/check";
 import useSound from "use-sound";
+import { twMerge } from "tailwind-merge";
+import StatusBar from "./status-bar"; // Import the StatusBar component
 
 // QuizContainer 的 Props 类型
 export interface QuizContainerProps {
@@ -17,6 +14,7 @@ export interface QuizContainerProps {
   onSubmit?: (answers: Record<string, unknown>) => void; // 提交答案时的回调
   styles?: React.CSSProperties;
   checkImmediate?: boolean; // 是否在回答时就检查对错
+  className?: string;
 }
 
 interface QuizContainerRef {
@@ -24,7 +22,7 @@ interface QuizContainerRef {
 }
 
 const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
-  ({ initialQuestions, onSubmit, styles, checkImmediate }, ref) => {
+  ({ initialQuestions, onSubmit, styles, checkImmediate, className }, ref) => {
     const {
       questions,
       setQuestions,
@@ -33,10 +31,8 @@ const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
       previousQuestion,
       answers,
       setAnswers,
+      setAnswerStatus, // Get the setter from the store
     } = useQuizStore();
-    const [answerStatus, setAnswerStatus] = useState<
-      "correct" | "incorrect" | "unanswered"
-    >("unanswered");
     const [playCorrectAudio] = useSound("/correct.wav");
     const [playIncorrectAudio] = useSound("/incorrect.wav");
 
@@ -45,10 +41,7 @@ const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
     }, [initialQuestions, setQuestions]);
 
     // 在 question 组件中调用, 用于更新答案
-    const handleAnswer = (
-      id: BaseQuestion["id"],
-      option: Option | Option[],
-    ) => {
+    const handleAnswer = (id: string, option: Option | Option[]) => {
       setAnswers({
         ...answers,
         [id]: option,
@@ -61,11 +54,13 @@ const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
       if (checkImmediate && !dontCheck) {
         if (checkAnswer(correctAnswer, option)) {
           playCorrectAudio();
-          setAnswerStatus("correct");
+          setAnswerStatus({ status: "correct" }); // Update status in store
         } else {
           playIncorrectAudio();
-          setAnswerStatus("incorrect");
+          setAnswerStatus({ status: "incorrect" }); // Update status in store
         }
+      } else {
+        setAnswerStatus({ status: "unanswered" }); // Optionally reset or keep previous status
       }
     };
 
@@ -80,19 +75,17 @@ const QuizContainer = forwardRef<QuizContainerRef, QuizContainerProps>(
     );
 
     return (
-      <div style={styles}>
-        <div className="flex justify-center gap-2">
-          {answerStatus === "correct" && (
-            <div className="text-green-500">正确</div>
-          )}
-          {answerStatus === "incorrect" && (
-            <div className="text-red-500">错误</div>
-          )}
+      <div
+        style={styles}
+        className={twMerge(className, "flex h-full flex-col justify-between")}
+      >
+        <div>
+          <StatusBar /> {/* Replace inline status display with StatusBar */}
+          <QuestionRenderer
+            question={questions[currentQuestionIndex]}
+            onAnswer={handleAnswer}
+          />
         </div>
-        <QuestionRenderer
-          question={questions[currentQuestionIndex]}
-          onAnswer={handleAnswer}
-        />
         <ToolBar
           currentQuestionIndex={currentQuestionIndex}
           totalQuestions={questions.length}

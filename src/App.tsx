@@ -67,18 +67,12 @@ const App = () => {
     },
   ];
   return (
-    <div className="flex h-screen justify-center">
+    <div className="flex h-screen flex-col items-center">
       <QuizContainer
         initialQuestions={questions}
         onSubmit={console.log}
         checkImmediate={true}
-        styles={{
-          width: "40%",
-          padding: 20,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
+        className="flex w-full flex-col items-center p-4 lg:w-1/2"
       />
     </div>
   );
